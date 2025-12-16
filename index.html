@@ -4,89 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aguarde o Redirecionamento - Grupo de Promoções</title>
-    <style>
-        /* Estilos CSS */
+<style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #f4f7f6;
-            color: #333;
+            background-color: #f0f2f5;
+            color: #1c1e21;
             text-align: center;
             padding: 20px;
         }
 
         .container {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
             width: 100%;
         }
 
         .profile-img {
-            width: 120px;
-            height: 120px;
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #25d366; /* Cor verde do WhatsApp */
-            margin-bottom: 25px;
+            border: 5px solid #25d366;
+            margin-bottom: 20px;
         }
 
         h1 {
-            color: #1e873b;
-            font-size: 1.8em;
-            margin-bottom: 10px;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            color: #000;
         }
 
         p {
-            font-size: 1.1em;
-            line-height: 1.6;
-            margin-bottom: 25px;
+            font-size: 1.05em;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: #4b4f56;
         }
 
-        .redirect-message {
-            margin-top: 30px;
+        .redirect-status {
+            margin: 20px 0;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        /* Estilização dos Botões */
+        .btn {
+            display: block;
+            padding: 15px;
+            margin: 10px 0;
+            text-decoration: none;
+            color: white;
+            border-radius: 10px;
             font-weight: bold;
-            color: #555;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 1.1em;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        
+
+        .btn:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+
+        .btn-whatsapp {
+            background-color: #25d366;
+        }
+
+        .btn-telegram {
+            background-color: #0088cc;
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #25d366;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #25d366;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             animation: spin 1s linear infinite;
-            margin-right: 10px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: #25d366;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        .cta-button:hover {
-            background-color: #1dab4f;
         }
     </style>
 </head>
@@ -106,39 +116,38 @@
             Você será redirecionado(a) automaticamente em <span id="countdown"> 5 </span> segundos...
         </div>
 
-        <a id="manual-link" class="cta-button" href="#" style="display:none;">Clique Aqui para Entrar no Grupo Agora</a>
+        <a id="link-whatsapp" href="https://chat.whatsapp.com/LegelXhfZHl7tKz61XUI9F" class="btn btn-whatsapp">
+            Entrar no Grupo do WhatsApp
+        </a>
+
+        <a href="https://t.me/cuponsodatech" class="btn btn-telegram">
+            Entrar no Canal do Telegram
+        </a>
     </div>
 
-    <script>
-        // Lógica JavaScript para Redirecionamento e Contador
-        const whatsappUrl = "https://chat.whatsapp.com/LegelXhfZHl7tKz61XUI9F"; // <-- **MUDE AQUI**
-        const countdownElement = document.getElementById('countdown');
-        const manualLink = document.getElementById('manual-link');
-        let countdown = 5;
+<script>
+        // --- CONFIGURAÇÃO ---
+        const urlDestino = "https://chat.whatsapp.com/LegelXhfZHl7tKz61XUI9F"; // <--- COLOQUE SEU LINK DO WHATSAPP AQUI
+        let tempoRestante = 5;
+        // --------------------
 
-        // Atualiza o link manual para caso o JS falhe ou o usuário queira clicar
-        manualLink.href = whatsappUrl;
+        const displayContador = document.getElementById('countdown');
 
-        // Função para atualizar o contador
-        function updateCountdown() {
-            countdownElement.textContent = countdown;
-            countdown--;
+        function iniciarContagem() {
+            const intervalo = setInterval(() => {
+                tempoRestante--;
+                displayContador.textContent = tempoRestante;
 
-            if (countdown < 0) {
-                // Redireciona quando o tempo acaba
-                window.location.replace(whatsappUrl);
-            } else {
-                // Continua o contador
-                setTimeout(updateCountdown, 1000);
-            }
+                if (tempoRestante <= 0) {
+                    clearInterval(intervalo);
+                    // Tenta redirecionar
+                    window.location.href = urlDestino;
+                }
+            }, 1000);
         }
 
-        updateCountdown();
-
-        
-        setTimeout(() => {
-            manualLink.style.display = 'inline-block';
-        }, 1000);
+        // Inicia assim que a página carrega
+        window.onload = iniciarContagem;
     </script>
 </body>
 </html>
