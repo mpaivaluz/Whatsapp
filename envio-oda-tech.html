@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Envio – Oda Tech</title>
+
+    <style>
+        body { font-family: Arial; background: #f1f5f9; padding: 30px; }
+        .card { background: white; padding: 20px; border-radius: 12px; max-width: 650px; margin-bottom: 20px; }
+        ul { list-style: none; padding: 0; max-height: 280px; overflow-y: auto; }
+        li { padding: 8px; border-bottom: 1px solid #eee; }
+        textarea { width: 100%; height: 120px; margin-bottom: 10px; }
+        button { padding: 12px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; }
+    </style>
+</head>
+
+<body>
+
+<h1>📲 Envio – Oda Tech</h1>
+
+<div class="card">
+    <h3>Selecione os grupos</h3>
+    <ul id="groupList"></ul>
+</div>
+
+<div class="card">
+    <textarea id="msg" placeholder="Mensagem"></textarea>
+    <input type="file" id="file" accept="image/*">
+    <br><br>
+    <button onclick="send()">Enviar</button>
+</div>
+
+<script>
+    const API_BASE = "https://notebookmiguel.ddns.net:3000";
+    const FILTER_TEXT = "oda tech";
+
+    async function loadGroups() {
+        const res = await fetch(`${API_BASE}/api/groups?name=${encodeURIComponent(FILTER_TEXT)}`);
+        const data = await res.json();
+
+        const list = document.getElementById("groupList");
+        list.innerHTML = "";
+
+        data.groups.forEach(g => {
+            list.innerHTML += `
+                <li>
+                    <label>
+                        <input type="checkbox" value="${g.id}">
+                        ${g.name}
+                    </label>
+                </li>`;
+        });
+    }
+
+    async function send() {
+        const text = msg.value;
+        const file = document.getElementById("file").files[0];
+        const groups = [...document.querySelectorAll("input:checked")].map(i => i.value);
+
+        const form = new FormData();
+        form.append("groups", JSON.stringify(groups));
+        form.append("text", text);
+        if (file) form.append("file", file);
+
+        await fetch(`${API_BASE}/api/send-multi`, {
+            method: "POST",
+            body: form
+        });
+
+        alert("Mensagens enviadas!");
+    }
+
+    loadGroups();
+</script>
+
+</body>
+</html>
